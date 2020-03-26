@@ -1,11 +1,19 @@
 # Giffer : Templatize GIFs.
 
+### Why?
+
+This code is to setup to create Multilingual GIFs for increasing the awareness of COVID-19 pandemic. 
+
 ### Dependencies:
 
     For Ubuntu, use `conda env create -f environment.yml`.
     For Windows, most of the code setup should work. Will soon update with `yml` file.
 
-### How it Works ?
+### How to run?
+
+Navigate to code and run `distance.py`. This reads a csv file and calls `giffer` function with a base template and content with its structure (`frame numbers & content`).
+
+### How it Works?
 
 We write on a GIF with empty template. For example, look at `data/gifs/distance.gif`.
 
