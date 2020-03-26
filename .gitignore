@@ -144,3 +144,4 @@ static
 
 out
 data/fonts
+data/*.csv
