@@ -6,8 +6,8 @@ This code is to setup to create Multilingual GIFs for increasing the awareness o
 
 ### Dependencies:
 
-    For Ubuntu, use `conda env create -f environment.yml`.
-    For Windows, most of the code setup should work. Will soon update with `yml` file.
+For Ubuntu, use `conda env create -f environment.yml`.
+For Windows, most of the code setup should work. Will soon update with `yml` file.
 
 ### How to run?
 
