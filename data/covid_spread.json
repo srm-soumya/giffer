@@ -1,0 +1,10 @@
+{
+  "num_frames": 34,
+  "tags": {
+    "T1": { "frames": [27],                 "point": [510, 300], "color":  "black"},
+    "T2": { "frames": [29, 30, 31, 32, 33], "point": [190, 100], "color":  "black"},
+    "T3": { "frames": [30, 31, 32, 33],     "point": [525, 100], "color":  "black"},
+    "T4": { "frames": [31, 32, 33],         "point": [415, 560], "color":  "black"},
+    "T5": { "frames": [32, 33],             "point": [820, 640], "color":  "black"}
+  }
+}
