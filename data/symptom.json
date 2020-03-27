@@ -1,0 +1,25 @@
+{
+  "num_frames": 1,
+  "duration": "None",
+  "tags": {
+    "T1":  { "frames": [1], "point": [170,  185], "color":  "black", "size": 22},
+    "T2":  { "frames": [1], "point": [280,  185], "color":  "black", "size": 22},
+    "T3":  { "frames": [1], "point": [380,  185], "color":  "black", "size": 22},
+    "T4":  { "frames": [1], "point": [500,  185], "color":  "black", "size": 22},
+    "T5":  { "frames": [1], "point": [600,  185], "color":  "black", "size": 22},
+    "T6":  { "frames": [1], "point": [705,  185], "color":  "black", "size": 22},
+    "T7":  { "frames": [1], "point": [820,  185], "color":  "black", "size": 22},
+    "T8":  { "frames": [1], "point": [930,  185], "color":  "black", "size": 22},
+    "T9":  { "frames": [1], "point": [1040, 185], "color":  "black", "size": 22},
+    "T10": { "frames": [1], "point": [1145, 185], "color":  "black", "size": 22},
+    "T11": { "frames": [1], "point": [60 ,  285], "color":  "black", "size": 32},
+    "T12": { "frames": [1], "point": [60 ,  410], "color":  "black", "size": 32},
+    "T13": { "frames": [1], "point": [60 ,  535], "color":  "black", "size": 32},
+    "T14": { "frames": [1], "point": [110,  650], "color":  "black", "size": 30},
+    "T15": { "frames": [1], "point": [345,  650], "color":  "black", "size": 30},
+    "T16": { "frames": [1], "point": [585,  650], "color":  "black", "size": 30},
+    "T17": { "frames": [1], "point": [830,  650], "color":  "black", "size": 30},
+    "T18": { "frames": [1], "point": [1065, 650], "color":  "black", "size": 30},
+    "T19": { "frames": [1], "point": [400,   20], "color":  "black", "size": 42}
+  }
+}
