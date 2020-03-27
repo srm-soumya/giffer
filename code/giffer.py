@@ -9,7 +9,7 @@ from typing import List, Callable, Union
 
 TEXTWRAP = 17  # Decides the wrap size of the text
 SIZE = 45
-L1,U1,L2,U2 = 140, 260, 30, 38
+L1, U1, L2, U2 = 140, 260, 30, 38
 
 
 def rescale(l1: int, u1: int, l2: int, u2: int) -> Callable[[int], int]:
