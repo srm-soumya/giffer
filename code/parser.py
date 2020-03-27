@@ -3,16 +3,16 @@ import pandas as pd
 from pathlib import Path
 from typing import Dict, List, Text
 
-from giffer import giffer
+from giffer import gifware, imgware
 
 DATA = Path('data')
-OUT = Path('out')
 FILE = 'covid-spread - social-distance.csv'
 CONFIG = 'covid_spread.json'
-GIF = 'covid_spread.gif'
+SRC = 'covid_spread.gif'
+SUFFIX = Path(SRC).suffix
 
-# final - bengali, gujurati, hindi, odia, punjabi, urdu, telugu, marati
-LANG = ['bengali', 'hindi', 'odia', 'punjabi', 'urdu', 'telugu', 'marati']
+# final - bengali, gujurati, hindi, odia, punjabi, urdu, marati
+LANG = ['hindi', 'odia']
 
 
 def bake_template(path: Path) -> dict:
@@ -47,23 +47,32 @@ def bake_template(path: Path) -> dict:
     config = json.load((path).open('r', encoding='utf-8'))
 
     vframes = set(frame for _, v in config['tags'].items() for frame in v['frames'])
-    template = {}
+    template = {
+        'meta': {'duration': config['duration']}
+    }
     for frame in vframes:
-        template[str(frame)] = [{"caption": t, "point": v["point"], "fill": v["color"]}
+        template[str(frame)] = [{'caption': t, 'point': v['point'], 'fill': v['color'], 'size': v['size']}
                                 for t, v in config['tags'].items() if frame in v['frames']]
 
     return template
 
 
 def main():
-    '''Runs the code for each language & generated a modified GIF for the same.'''
+    '''Runs the code for each language & generated a modified SRC for the same.'''
     data = pd.read_csv(DATA/FILE, index_col='language', skiprows=[1])
     template = bake_template(DATA/CONFIG)
 
+    OUT = Path('out')/'gif' if SUFFIX == '.gif' else Path('out')/'image'
+    OUT.mkdir(exist_ok=True)
+
     for L in LANG:
-        print(f'Creating {L}.gif')
+        print(f'Creating {L}{SUFFIX}')
         FONT = {'family': DATA/'fonts'/'indic'/f'{L}.ttf'}
-        giffer(f'{DATA}/gifs/{GIF}', data[L].to_dict(), template, FONT, f'{OUT}/{L}.gif')
+
+        if SUFFIX == '.gif':
+            gifware(f'{DATA}/src/{SRC}', data[L].to_dict(), template, FONT, f'{OUT}/{L}.gif')
+        else:
+            imgware(f'{DATA}/src/{SRC}', data[L].to_dict(), template, FONT, f'{OUT}/{L}.png')
 
 
 if __name__ == '__main__':

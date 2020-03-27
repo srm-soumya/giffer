@@ -9,4 +9,4 @@ def process(folder: Path):
 
 
 if __name__ == '__main__':
-    process(Path('out'))
+    process(Path('out/gif'))
