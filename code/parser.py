@@ -5,14 +5,15 @@ from typing import Dict, List, Text
 
 from giffer import gifware, imgware
 
+NAME = 'symptom'
 DATA = Path('data')
-FILE = 'covid-spread - social-distance.csv'
-CONFIG = 'covid_spread.json'
-SRC = 'covid_spread.gif'
+FILE = f'covid-spread - {NAME}.csv'
+CONFIG = f'{NAME}.json'
+SRC = f'{NAME}.png'
 SUFFIX = Path(SRC).suffix
 
 # final - bengali, gujurati, hindi, odia, punjabi, urdu, marati
-LANG = ['hindi', 'odia']
+LANG = ['hindi', 'tamil', 'malayalam', 'telugu']
 
 
 def bake_template(path: Path) -> dict:
@@ -25,21 +26,22 @@ def bake_template(path: Path) -> dict:
     eg:
     config
     {
-        'num_frames': 2
+        'num_frames': 2,
+        'duration': "[1,3]",
         'tags': {
-            'T1': [1,2], 'point': [0,0]
-            'T2': [2],   'point': [1,1]
+            'T1': {'frames': [1,2], 'box': [0,0,1,1], 'color': 'black'},
+            'T2': {'frames': [2],   'box': [1,1,2,2], 'color': 'black'}
         }
     }
 
     template:
     {
         '1': [
-            {'caption': 'T1', 'point': [0,0]}
+            {'caption': 'T1', 'box': [0,0,1,1], 'color': 'black'}
         ]
         '2': [
-            {'caption': 'T1', 'point': [0,0]},
-            {'caption': 'T2', 'point': [1,1]}
+            {'caption': 'T1', 'box': [0,0,1,1], 'color': 'black'},
+            {'caption': 'T2', 'box': [1,1,2,2], 'color': 'black'}
         ]
     }
 
@@ -51,7 +53,7 @@ def bake_template(path: Path) -> dict:
         'meta': {'duration': config['duration']}
     }
     for frame in vframes:
-        template[str(frame)] = [{'caption': t, 'point': v['point'], 'fill': v['color'], 'size': v['size']}
+        template[str(frame)] = [{'caption': t, 'box': v['box'], 'fill': v['color']}
                                 for t, v in config['tags'].items() if frame in v['frames']]
 
     return template
@@ -67,12 +69,12 @@ def main():
 
     for L in LANG:
         print(f'Creating {L}{SUFFIX}')
-        FONT = {'family': DATA/'fonts'/'indic'/f'{L}.ttf'}
+        template['meta']['lang'] = L
 
         if SUFFIX == '.gif':
-            gifware(f'{DATA}/src/{SRC}', data[L].to_dict(), template, FONT, f'{OUT}/{L}.gif')
+            gifware(f'{DATA}/src/{SRC}', data[L].to_dict(), template, f'{OUT}/{L}.gif')
         else:
-            imgware(f'{DATA}/src/{SRC}', data[L].to_dict(), template, FONT, f'{OUT}/{L}.png')
+            imgware(f'{DATA}/src/{SRC}', data[L].to_dict(), template, f'{OUT}/{L}.png')
 
 
 if __name__ == '__main__':

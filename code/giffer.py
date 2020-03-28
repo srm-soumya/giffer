@@ -1,41 +1,65 @@
 import cv2
 import imageio as io
 import numpy as np
-import textwrap
+from dataclasses import dataclass
 from pathlib import Path
 from pygifsicle import optimize
 from PIL import Image, ImageDraw, ImageFont
 from typing import List, Callable, Union
 
-TEXTWRAP = 17  # Decides the wrap size of the text
-SIZE = 45
-L1, U1, L2, U2 = 140, 260, 30, 38
+
+@dataclass
+class Box:
+    L: int = 0
+    T: int = 0
+    R: int = 0
+    B: int = 0
+
+    def pad(self, p=5):
+        self.L, self.T = self.L + p, self.T + p
+        self.R, self.B = self.R - p, self.B - p
 
 
-def rescale(l1: int, u1: int, l2: int, u2: int) -> Callable[[int], int]:
-    '''Returns a function that maps range l1 -> u1 to u2 -> l1'''
-    denom = (u1 - l1)
+def draw_clean_text(draw: ImageDraw, text: str, lang: str, box: Box, spacing: int = 0, pad: int = 0) -> None:
+    '''Place the text at the center of the bounding box.
+    Input:
+        draw:    ImageDraw instance
+        text:    Content to add
+        lang:    Language
+        box:     Bounding box
+        spacing: Vertical spacing between lines
+        pad:     Inner padding to add to the bounding box
+    '''
+    box.pad(p=pad)
+    W, H = (box.R - box.L), (box.B - box.T)
+    font_path = f'data/fonts/indic/{lang}.ttf'
+    F = ImageFont.truetype(font=font_path, size=1)
 
-    def _inner(n):
-        num = (u1 - n) / denom
-        return int(num * (u2 - l2)) + l2
+    size = 1
 
-    return _inner
+    w, h = draw.multiline_textsize(text, font=F, spacing=spacing)
+    while w < W and h < H:
+        size += 1
+        F = ImageFont.truetype(font=font_path, size=size)
+        w, h = draw.multiline_textsize(text, font=F, spacing=spacing)
+
+    F = ImageFont.truetype(font=font_path, size=size)
+    w, h = F.getsize_multiline(text)
+
+    cx = (W - w) / 2 + box.L
+    cy = (H - h) / 2 + box.T - 5
+
+    draw.multiline_text((cx, cy), text, fill='black', font=F, align='center', spacing=spacing)
 
 
-def wrapper(text: str, width: Union[int, None] = TEXTWRAP) -> str:
-    '''Splits text into smaller sequences'''
-    return text if width is None else "\n".join(textwrap.wrap(text, width=width))
-
-
-def draw_caption(image: Union[np.ndarray, None], data: dict, captions: List[dict], FONT: dict, gif: bool = True) -> np.ndarray:
+def draw_caption(image: Union[np.ndarray, None], data: dict, captions: List[dict], lang: str, gif: bool = True) -> np.ndarray:
     '''Draws text on an Image.
 
     Input:
         image: Image to be modified
         data: tag => language mapping
         captions: List of tags with their metadata
-        FONT: font
+        lang: Language of the text
         gif: Format of the input image
 
     Returns:
@@ -43,29 +67,23 @@ def draw_caption(image: Union[np.ndarray, None], data: dict, captions: List[dict
     '''
     _image = Image.fromarray(image) if gif else image
     draw = ImageDraw.Draw(_image)
-    scale = rescale(L1, U1, L2, U2)
 
     for c in captions:
-        caption = wrapper(data[c['caption']])
-        font = ImageFont.truetype(font=str(FONT['family']), size=c['size'])
-        size = scale(draw.textsize(caption, font=font)[0])
-        size = size if size < SIZE else 70
-        if not gif:
-            size = c['size']
-        font = ImageFont.truetype(font=str(FONT['family']), size=size)
-        draw.text(c['point'], caption, fill=c['fill'], font=font)
+        caption = data[c['caption']]
+        box = Box(*c['box'])
+        # draw.rectangle([(box.L, box.T), (box.R, box.B)], fill="#ddffff", outline="blue")
+        draw_clean_text(draw, caption, lang, box, spacing=-5, pad=4)
 
     return np.array(_image) if gif else _image
 
 
-def gifware(file: Path, data: dict, template: dict, FONT: dict, save: str = 'test.gif') -> None:
+def gifware(file: Path, data: dict, template: dict, save: str = 'test.gif') -> None:
     '''Modify the contents of a GIF to regional languages.
 
     Input:
         file: GIF input file
         data: tag => language mapping
         template: Instructions on where to position the text
-        FONT: Font family
         save: Path to save the modified GIF
     '''
     gif = io.mimread(file)
@@ -74,7 +92,8 @@ def gifware(file: Path, data: dict, template: dict, FONT: dict, save: str = 'tes
     for (i, frame) in enumerate(gif):
         frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2RGB)
         if str(i) in template:
-            frame = draw_caption(frame, data, captions=template[str(i)], FONT=FONT)
+            frame = draw_caption(
+                frame, data, captions=template[str(i)], lang=template['meta']['lang'])
 
         frames.append(frame)
 
@@ -82,16 +101,17 @@ def gifware(file: Path, data: dict, template: dict, FONT: dict, save: str = 'tes
     optimize(str(save))
 
 
-def imgware(file: Path, data: dict, template: dict, FONT: dict, save: str = 'test.gif') -> None:
+def imgware(file: Path, data: dict, template: dict, save: str = 'test.gif') -> None:
     '''Modify the contents of an Image to regional languages.
 
     Input:
         file: Image input file
         data: tag => language mapping
         template: Instructions on where to position the text
-        FONT: Font family
         save: Path to save the modified Image
     '''
     image = Image.open(file).convert('RGBA')
-    image = draw_caption(image, data, captions=template["1"], FONT=FONT, gif=False)
+    image = draw_caption(
+        image, data, captions=template["1"], lang=template['meta']['lang'], gif=False)
+    print('Saving:', save)
     image.save(save, 'PNG')
