@@ -8,7 +8,7 @@ def split_and_store(path: str):
     f = Path(path)
     Path(f'{f.parent}/frames').mkdir(exist_ok=True)
 
-    for (i,frame) in enumerate(io.mimread(f)):
+    for (i,frame) in enumerate(io.get_reader(f)):
         io.imwrite(f'{f.parent}/frames/{f.stem}_{i}.tiff', frame)
 
 
