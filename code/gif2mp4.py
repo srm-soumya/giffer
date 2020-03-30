@@ -1,12 +1,16 @@
 import subprocess
+import typer
 from pathlib import Path
 
+g2m = typer.Typer()
 
-def process(folder: Path):
+@g2m.command()
+def process(path: str = typer.Option(..., '--path', '-p', help('Folder path'))):
+    folder = Path(path)
     for gif in folder.glob('*.gif'):
         subprocess.call(
             f'ffmpeg -i {folder/gif.stem}.gif -movflags faststart -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" {folder/gif.stem}.mp4', shell=True)
 
 
 if __name__ == '__main__':
-    process(Path('out/gif'))
+    g2m()

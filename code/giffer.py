@@ -20,13 +20,14 @@ class Box:
         self.R, self.B = self.R - p, self.B - p
 
 
-def draw_clean_text(draw: ImageDraw, text: str, lang: str, box: Box, spacing: int = 0, pad: int = 0) -> None:
+def draw_clean_text(draw: ImageDraw, text: str, lang: str, box: Box, fill: str = 'black', spacing: int = 0, pad: int = 0) -> None:
     '''Place the text at the center of the bounding box.
     Input:
         draw:    ImageDraw instance
         text:    Content to add
         lang:    Language
         box:     Bounding box
+        fill:    Color of text
         spacing: Vertical spacing between lines
         pad:     Inner padding to add to the bounding box
     '''
@@ -50,9 +51,9 @@ def draw_clean_text(draw: ImageDraw, text: str, lang: str, box: Box, spacing: in
     w, h = F.getsize_multiline(text)
 
     cx = (W - w) / 2 + box.L
-    cy = (H - h) / 2 + box.T - 5
+    cy = (H - h) / 2 + box.T - 10
 
-    draw.multiline_text((cx, cy), text, fill='black', font=F, align='center', spacing=spacing)
+    draw.multiline_text((cx, cy), text, fill=fill, font=F, align='center', spacing=spacing)
 
 
 def draw_caption(image: Union[np.ndarray, None], data: dict, captions: List[dict], lang: str, gif: bool = True) -> np.ndarray:
@@ -74,8 +75,9 @@ def draw_caption(image: Union[np.ndarray, None], data: dict, captions: List[dict
     for c in captions:
         caption = data[c['caption']]
         box = Box(*c['box'])
+        fill = c['fill']
         # draw.rectangle([(box.L, box.T), (box.R, box.B)], fill="#ddffff", outline="blue")
-        draw_clean_text(draw, caption, lang, box, spacing=4, pad=8)
+        draw_clean_text(draw, caption, lang, box, fill, spacing=10, pad=8)
 
     return np.array(_image) if gif else _image
 

@@ -1,12 +1,14 @@
 import json
 import pandas as pd
 from pathlib import Path
+import typer
 from typing import Dict, List, Text
-import sys, os
 from giffer import gifware, imgware
 
 # final - bengali, gujurati, hindi, odia, punjabi, urdu, marati
-LANG = ['hindi', 'odia']
+# LANG = ['hindi', 'odia']
+
+parser = typer.Typer(help="GIF CLI")
 
 
 def bake_template(path: Path) -> dict:
@@ -52,20 +54,22 @@ def bake_template(path: Path) -> dict:
     return template
 
 
-def main(filepath):
-
-    NAME = Path(filepath).stem
-    DATA = Path('data')
-    FILE = f'covid-spread - {NAME}.csv'
-    CONFIG = f'{NAME}.json'
-    SRC = Path(filepath).name
+@parser.command()
+def parse(path: str = typer.Option(..., '--path', '-p', help='Path to the source GIF/Image file'),
+          data: str = typer.Option('data', '--data', '-d', help='Path to data dir', show_default=True),
+          lang: str = typer.Option(..., '--lang', '-l', help='Languages comma separated: hindi, marathi, odia')):
+    '''Runs the code for each language & generates a modified SRC for the same.'''
+    SRC = Path(path)
+    DATA = Path(data)
+    LANG = [L.strip() for L in lang.split(',')]
+    FILE = f'covid-spread - {SRC.stem}.csv'
+    CONFIG = f'{SRC.stem}.json'
     SUFFIX = Path(SRC).suffix
 
-    '''Runs the code for each language & generated a modified SRC for the same.'''
     data = pd.read_csv(DATA/FILE, index_col='language', skiprows=[1])
     template = bake_template(DATA/CONFIG)
 
-    OUT = Path('out')/'gif' if SUFFIX == '.gif' else Path('out')/'image'
+    OUT = Path('out')/'gif'/SRC.stem if SUFFIX == '.gif' else Path('out')/'image'/SRC.stem
     OUT.mkdir(exist_ok=True,parents=True)
 
     for L in LANG:
@@ -73,10 +77,10 @@ def main(filepath):
         template['meta']['lang'] = L
 
         if SUFFIX == '.gif':
-            gifware(f'{DATA}/src/{SRC}', data[L].to_dict(), template, f'{OUT}/{L}.gif')
+            gifware(SRC, data[L].to_dict(), template, f'{OUT}/{L}.gif')
         else:
-            imgware(f'{DATA}/src/{SRC}', data[L].to_dict(), template, f'{OUT}/{L}.png')
+            imgware(SRC, data[L].to_dict(), template, f'{OUT}/{L}.png')
 
 
 if __name__ == '__main__':
-    main(sys.argv[1])
+    parser()
