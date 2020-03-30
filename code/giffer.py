@@ -43,6 +43,9 @@ def draw_clean_text(draw: ImageDraw, text: str, lang: str, box: Box, spacing: in
         F = ImageFont.truetype(font=font_path, size=size)
         w, h = draw.multiline_textsize(text, font=F, spacing=spacing)
 
+    # TODO: fix, uncomment this if you want a static size & not dynamic size for texts
+    # size = 30 if size < 70 else 100
+
     F = ImageFont.truetype(font=font_path, size=size)
     w, h = F.getsize_multiline(text)
 
@@ -72,7 +75,7 @@ def draw_caption(image: Union[np.ndarray, None], data: dict, captions: List[dict
         caption = data[c['caption']]
         box = Box(*c['box'])
         # draw.rectangle([(box.L, box.T), (box.R, box.B)], fill="#ddffff", outline="blue")
-        draw_clean_text(draw, caption, lang, box, spacing=-5, pad=4)
+        draw_clean_text(draw, caption, lang, box, spacing=4, pad=8)
 
     return np.array(_image) if gif else _image
 

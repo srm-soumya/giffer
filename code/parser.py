@@ -13,7 +13,7 @@ SRC = f'{NAME}.png'
 SUFFIX = Path(SRC).suffix
 
 # final - bengali, gujurati, hindi, odia, punjabi, urdu, marati
-LANG = ['hindi', 'tamil', 'malayalam', 'telugu']
+LANG = ['hindi', 'odia']
 
 
 def bake_template(path: Path) -> dict:

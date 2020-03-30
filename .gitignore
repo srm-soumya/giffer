@@ -143,6 +143,8 @@ media
 static
 
 out
+.vscode
 data/fonts
 data/*.csv
+data/*.zip
 data/source/frames
