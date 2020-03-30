@@ -2,7 +2,7 @@
 
 ### Why?
 
-This code is setup to create Multilingual GIFs for increasing the awareness of COVID-19 pandemic. 
+This code is setup to create Multilingual GIFs/Images for increasing the awareness of COVID-19 pandemic. 
 
 ### Folder structure
 .  
@@ -32,7 +32,8 @@ out/ - Stores the newly baked GIFs
 ```
 
 *Resources*  
-[Fonts](https://drive.google.com/open?id=1n2x_uE_MHusDcMTsSghA-XAUP5eytNxN)  
+[Fonts](https://drive.google.com/open?id=1n2x_uE_MHusDcMTsSghA-XAUP5eytNxN) . Download & extract it inside the `data/` dir.
+
 [Google Sheet](https://docs.google.com/spreadsheets/d/1EiuYQQL98vR2SBUFbCbPOw4Rpe-A-sm5TwrTo46jUGQ/edit?usp=sharing) Download as CSV & place it inside the  `data/` dir.
 
 
@@ -46,8 +47,12 @@ For Windows, most of the code setup should work. Will soon update with `yml` fil
 
 ```
 cd code/
-make gif
+make splitgif filename='data/src/social-distance.gif' #Only for GIFs.
+make translation filename='data/src/social-distance.gif'
 make mp4
+
+# Note this above approach works only when the CSV name aligns with that of gif's/png's name.
+# For ex: covid-spread - {social-distance}.csv with {social-distance}.gif
 ```
 
 `make gif`: 
