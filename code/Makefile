@@ -1,7 +1,10 @@
 all: gif mp4
 
-gif:
-	python parser.py
+splitgif:
+	python splitter.py $(filename)
+
+translation:
+	python parser.py $(filename)
 
 mp4: gif
 	python gif2mp4.py
