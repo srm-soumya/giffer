@@ -20,7 +20,7 @@ This code is setup to create Multilingual GIFs/Images for increasing the awarene
 └── out  
     ├── gif  
     └── image  
-
+    
 ```
 
 nbs/ - Experimental code 
@@ -41,6 +41,41 @@ out/ - Stores the newly baked GIFs
 
 For Ubuntu, use `conda env create -f environment.yml`.  
 For Windows, most of the code setup should work. Will soon update with `yml` file.
+
+
+### Process
+1. Select a GIF or Image that you wish to translate to multiple languages, then, download inside `data/src/` folder and save as `{filename}.{suffix}`
+
+2. Move into the `code` dir.
+```
+cd code
+``` 
+
+3. Split the GIF into frames
+```
+python split_merge.py split -p data/src/{filename}.gif
+```
+
+4. Clean the slate, remove texts from the GIF using Photoshop/GIMP/Paint or if you have a designer friend, take their help!  
+This process is manual for now, automating this would require building a UI which is somthing we are thinking to build, but not right now.
+
+5. Create a template JSON file, name it {filename}.json & put inside the `data` directory. For eg: look into `data/social-distance.json`.  
+Again take the help of a designer friend or use application like Photoshop/GIMP to find the box coordinates `(left, top, right, bottom)`
+
+6. Merge the frames back into GIF
+```
+python split_merge.py merge -p data/src/frames/{filename} -n {filename}.{suffix}
+```
+
+7. Create the translated GIF/Image files
+```
+python parser.py -p data/src/{filename}.{suffix} -l hindi,odia,tamil...
+```
+
+8. Create Mp4 files for GIF to share with others
+```
+python gif2mp4 out/gif/{filename}
+```
 
 
 ### How to run?
