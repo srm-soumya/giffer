@@ -5,8 +5,7 @@ import typer
 from typing import Dict, List, Text
 from giffer import gifware, imgware
 
-# final - bengali, gujurati, hindi, odia, punjabi, urdu, marati
-# LANG = ['hindi', 'odia']
+# LANG - hindi, bengali, gujurati, odia, punjabi, urdu, marati, | tamil, telugu, kannada, malayalam
 
 parser = typer.Typer(help="GIF CLI")
 

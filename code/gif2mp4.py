@@ -2,10 +2,8 @@ import subprocess
 import typer
 from pathlib import Path
 
-g2m = typer.Typer()
 
-@g2m.command()
-def process(path: str = typer.Option(..., '--path', '-p', help('Folder path'))):
+def transform(path: str):
     folder = Path(path)
     for gif in folder.glob('*.gif'):
         subprocess.call(
@@ -13,4 +11,4 @@ def process(path: str = typer.Option(..., '--path', '-p', help('Folder path'))):
 
 
 if __name__ == '__main__':
-    g2m()
+    typer.run(transform)

@@ -147,4 +147,4 @@ out
 data/fonts
 data/*.csv
 data/*.zip
-data/source/frames
+data/src/frames
